@@ -29,10 +29,15 @@ func (c *Client) SetEndpoint(str string) {
 // make an api request
 func (c *Client) api(method string, path string, fields url.Values) (body []byte, err error) {
 	var req *http.Request
-	url := fmt.Sprintf("https://%s/v%d%s", c.apiVersion, c.apiEndpoint, path)
+	url := fmt.Sprintf("https://%s/v%d%s", c.apiEndpoint, c.apiVersion, path)
 
 	if method == "POST" && fields != nil {
 		req, err = http.NewRequest(method, url, strings.NewReader(fields.Encode()))
+
+    if err != nil {
+      panic(err)
+    }
+
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 	} else {
 		if fields != nil {
