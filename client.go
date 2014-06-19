@@ -11,24 +11,25 @@ import (
 	"strings"
 )
 
-const (
-	API_VERSION  = 2
-	API_ENDPOINT = "api.mailgun.net"
-)
-
 type Client struct {
-	httpClient *http.Client
-	key        string
+	httpClient  *http.Client
+	key         string
+  apiVersion  int
+  apiEndpoint string
 }
 
 func New(key string) *Client {
-	return &Client{httpClient: &http.Client{}, key: key}
+	return &Client{httpClient: &http.Client{}, key: key, apiVersion: 2, apiEndpoint: "api.mailgun.net"}
+}
+
+func (c *Client) SetEndpoint(str string) {
+  c.apiEndpoint = str
 }
 
 // make an api request
 func (c *Client) api(method string, path string, fields url.Values) (body []byte, err error) {
 	var req *http.Request
-	url := fmt.Sprintf("https://%s/v%d%s", API_ENDPOINT, API_VERSION, path)
+	url := fmt.Sprintf("https://%s/v%d%s", c.apiVersion, c.apiEndpoint, path)
 
 	if method == "POST" && fields != nil {
 		req, err = http.NewRequest(method, url, strings.NewReader(fields.Encode()))
